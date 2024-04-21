@@ -12,7 +12,16 @@
     poetry install
 ```
 
-## 3. run project
+## 3. Run migrations
+```
+    poetry run python ./models/run_migrations.py
+```
+or if you set the virtual environment as your default python environment
+```
+    python ./models/run_migrations.py
+```
+
+## 4. run project
 ```
     poetry run gunicorn -c gunicorn_config.py
 ```

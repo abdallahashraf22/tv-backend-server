@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Annotated
 
 import sqlalchemy.exc
-from pydantic import BaseModel, constr, Field
+from pydantic import BaseModel, Field
 from fastapi import APIRouter, Response
 
 from models import engine, Genre

@@ -24,6 +24,7 @@ user_watched_content_association = Table(
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(64), unique=True, index=True)
     email = Column(String(50), unique=True, index=True)
     password = Column(String(64))
     name = Column(String(50))
