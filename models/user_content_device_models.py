@@ -28,6 +28,7 @@ class User(Base):
     password = Column(String(64))
     name = Column(String(50))
     phone_number = Column(String(13))
+    type = Column(String(10), default='user')
 
     watched_content = relationship("Content", secondary=user_watched_content_association, back_populates="watched_user")
     favourite_content = relationship("Content", secondary=user_favorite_content_association,
