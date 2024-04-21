@@ -15,8 +15,9 @@ sqlalchemy = "^2.0.29"
 mysql-connector-python = "^8.3.0"
 python-dotenv = "^1.0.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = "^1.7.4"
 pydantic = {extras = ["email"], version = "^2.7.0"}
+passlib = "^1.7.4"
+bcrypt = "4.0.1"
 
 
 [build-system]

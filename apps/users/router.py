@@ -1,36 +1,29 @@
 from typing import Annotated
 
+import sqlalchemy
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, EmailStr
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends, HTTPException, status
-from auth.security import authenticate_user, create_access_token
+from fastapi import APIRouter, Depends, HTTPException, status, Response
+from auth.security import authenticate_user, create_access_token, get_password_hash
 
 from models import User, engine
+from auth import UserPydanticModel
 from utils.response import ReturnResponse
 
 security_router = APIRouter(prefix="/security", tags=["security"])
 
 
-class UserPydanticModel(BaseModel):
-    username: Annotated[str, Field(min_length=3, max_length=64)]
-    email: Annotated[EmailStr, Field(min_length=3, max_length=64)]
-    password: Annotated[str, Field(min_length=8, max_length=64)]
-    name: Annotated[str, Field(min_length=3, max_length=64)]
-    phone: Annotated[str, Field(min_length=13, max_length=13)]
-    type: Annotated[str, Field(min_length=3, max_length=64, default="user")]
-
-
 @security_router.post("/register")
-def register_user(user: UserPydanticModel):
+def register_user(response: Response, user: UserPydanticModel):
     try:
         with Session(engine) as session:
             new_user = User(
                 username=user.username,
                 email=user.email,
-                password=user.password,
+                password=get_password_hash(user.password),
                 name=user.name,
-                phone=user.phone,
+                phone_number=user.phone_number,
                 type=user.type
             )
             session.add(new_user)
@@ -40,7 +33,15 @@ def register_user(user: UserPydanticModel):
                 is_success=True,
                 data={"id": new_user.id, "email": new_user.email}
             )
+    except sqlalchemy.exc.IntegrityError as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return ReturnResponse.return_response(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            is_success=False,
+            errors=[f"{e.__class__.__name__}: Most probably a duplicate user"]
+        )
     except Exception as e:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return ReturnResponse.return_response(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             is_success=False,
