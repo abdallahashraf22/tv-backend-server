@@ -5,12 +5,11 @@ from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from jose import jwt, JWTError
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import Depends, APIRouter, HTTPException, status
-
+from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
 
 from models import User, engine
 
@@ -59,7 +58,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def is_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def is_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -67,7 +66,7 @@ async def is_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("email")
+        username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
     except JWTError:
@@ -78,7 +77,7 @@ async def is_user(token: Annotated[str, Depends(oauth2_scheme)]):
     return user
 
 
-async def is_admin(current_user: Annotated[User, Depends(is_user)]):
+def is_admin(current_user: Annotated[User, Depends(is_user)]):
     if current_user.type != "admin":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -88,3 +87,10 @@ async def is_admin(current_user: Annotated[User, Depends(is_user)]):
     return current_user
 
 
+class UserPydanticModel(BaseModel):
+    username: Annotated[str, Field(min_length=3, max_length=64)]
+    email: Annotated[EmailStr, Field(min_length=3, max_length=64)]
+    password: Annotated[str, Field(min_length=8, max_length=64)]
+    name: Annotated[str, Field(min_length=3, max_length=64)]
+    phone_number: Annotated[str, Field(min_length=11, max_length=13)]
+    type: Annotated[str, Field(min_length=3, max_length=64, default="user")]

@@ -1,7 +1,6 @@
 import uvicorn
 import traceback
 import logging.config
-
 from http import HTTPStatus
 
 from fastapi import FastAPI
@@ -9,8 +8,7 @@ from fastapi.responses import JSONResponse
 
 from utils.response import ReturnResponse
 from utils.log_utils import LOGGING_CONFIG
-from apps import genres_router, content_router
-
+from apps import genres_router, content_router, security_router
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("TV_backend")
@@ -18,7 +16,7 @@ app = FastAPI()
 
 app.include_router(genres_router)
 app.include_router(content_router)
-
+app.include_router(security_router)
 
 
 @app.get("/")
@@ -43,7 +41,6 @@ async def catch_exceptions_middleware(request, call_next):
 
 
 app.middleware('http')(catch_exceptions_middleware)
-
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="0.0.0.0", port=8000)

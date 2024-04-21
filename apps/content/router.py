@@ -2,12 +2,13 @@ import re
 from http import HTTPStatus
 from typing import Optional, Annotated, List
 
-from fastapi import APIRouter, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session, joinedload
+from fastapi import APIRouter, Response, Depends
 
 from models import engine, Content, Genre
 from utils.response import ReturnResponse
+from auth import is_user, UserPydanticModel
 
 content_router = APIRouter(prefix="/content", tags=["content"])
 
@@ -20,7 +21,7 @@ class ContentBase(BaseModel):
 
 
 @content_router.get("/")
-def get_content(response: Response, only_available: bool = False):
+def get_content(response: Response, current_user: Annotated[UserPydanticModel, Depends(is_user)], only_available: bool = False):
     try:
         with Session(engine) as session:
             if only_available:
