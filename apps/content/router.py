@@ -15,32 +15,42 @@ content_router = APIRouter(prefix="/content", tags=["content"])
 
 class ContentBase(BaseModel):
     title: str
-    duration: Annotated[str, Field(pattern=re.compile(r"^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$"))]
+    duration: Annotated[
+        str, Field(pattern=re.compile(r"^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$"))
+    ]
     available: Optional[bool] = True
     genres: Optional[List[int]] = []
 
 
 @content_router.get("/")
-def get_content(response: Response, current_user: Annotated[UserPydanticModel, Depends(is_user)], only_available: bool = False):
+def get_content(
+    response: Response,
+    current_user: Annotated[UserPydanticModel, Depends(is_user)],
+    only_available: bool = False,
+):
     try:
         with Session(engine) as session:
             if only_available:
-                content = session.query(Content).options(joinedload(Content.genres)).filter(
-                    Content.available is True).all()
+                content = (
+                    session.query(Content)
+                    .options(joinedload(Content.genres))
+                    .filter(Content.available is True)
+                    .all()
+                )
             else:
-                content = session.query(Content).options(joinedload(Content.genres)).all()
+                content = (
+                    session.query(Content).options(joinedload(Content.genres)).all()
+                )
             response.status_code = HTTPStatus.OK.value
             return ReturnResponse.return_response(
-                status_code=HTTPStatus.OK.value,
-                is_success=True,
-                data=content
+                status_code=HTTPStatus.OK.value, is_success=True, data=content
             )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -48,27 +58,29 @@ def get_content(response: Response, current_user: Annotated[UserPydanticModel, D
 def get_content_by_id(content_id: int, response: Response):
     try:
         with Session(engine) as session:
-            content = session.query(Content).options(joinedload(Content.genres)).get(content_id)
+            content = (
+                session.query(Content)
+                .options(joinedload(Content.genres))
+                .get(content_id)
+            )
             if content:
                 response.status_code = HTTPStatus.OK.value
                 return ReturnResponse.return_response(
-                    status_code=HTTPStatus.OK.value,
-                    is_success=True,
-                    data=content
+                    status_code=HTTPStatus.OK.value, is_success=True, data=content
                 )
             else:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.NOT_FOUND.value,
                     is_success=False,
-                    errors=["Content not found"]
+                    errors=["Content not found"],
                 )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -85,7 +97,7 @@ def create_content(content: ContentBase, response: Response):
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.BAD_REQUEST.value,
                     is_success=False,
-                    errors=["no such genres found"]
+                    errors=["no such genres found"],
                 )
             new_content = Content(**content)
             new_content.genres = actual_genres
@@ -95,14 +107,14 @@ def create_content(content: ContentBase, response: Response):
             return ReturnResponse.return_response(
                 status_code=HTTPStatus.CREATED.value,
                 is_success=True,
-                data={"message": "Content created successfully"}
+                data={"message": "Content created successfully"},
             )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -123,21 +135,21 @@ def update_content(content_id: int, content: ContentBase, response: Response):
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.OK.value,
                     is_success=True,
-                    data={"message": "Content updated successfully"}
+                    data={"message": "Content updated successfully"},
                 )
             else:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.NOT_FOUND.value,
                     is_success=False,
-                    errors=["Content not found"]
+                    errors=["Content not found"],
                 )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -153,19 +165,19 @@ def delete_content(content_id: int, response: Response):
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.OK.value,
                     is_success=True,
-                    data={"message": "Content deleted successfully"}
+                    data={"message": "Content deleted successfully"},
                 )
             else:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.NOT_FOUND.value,
                     is_success=False,
-                    errors=["Content not found"]
+                    errors=["Content not found"],
                 )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )

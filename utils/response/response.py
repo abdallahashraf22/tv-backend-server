@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 class ReturnResponse(ABC):
     @classmethod
     def return_response(
-            cls, status_code, is_success=None, data=None, errors=None
+        cls, status_code, is_success=None, data=None, errors=None
     ) -> Dict:
         if is_success:
             return jsonable_encoder(

@@ -19,16 +19,14 @@ def get_genres(response: Response):
             genres = session.query(Genre).all()
             response.status_code = HTTPStatus.OK.value
             return ReturnResponse.return_response(
-                status_code=HTTPStatus.OK.value,
-                is_success=True,
-                data=genres
+                status_code=HTTPStatus.OK.value, is_success=True, data=genres
             )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -47,21 +45,21 @@ def create_genre(genre: GenreBase, response: Response):
             return ReturnResponse.return_response(
                 status_code=HTTPStatus.CREATED.value,
                 is_success=True,
-                data={"id": new_genre.id, "name": new_genre.name}
+                data={"id": new_genre.id, "name": new_genre.name},
             )
     except sqlalchemy.exc.IntegrityError as e:
         response.status_code = HTTPStatus.BAD_REQUEST.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:Probably a duplicate genre"]
+            errors=[f"{e.__class__.__name__}:Probably a duplicate genre"],
         )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -77,28 +75,28 @@ def edit_genre(genre_id: int, genre: GenreBase, response: Response):
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.OK.value,
                     is_success=True,
-                    data={"id": genre_to_update.id, "name": genre.name}
+                    data={"id": genre_to_update.id, "name": genre.name},
                 )
             else:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.NOT_FOUND.value,
                     is_success=False,
-                    errors=["Genre not found"]
+                    errors=["Genre not found"],
                 )
     except sqlalchemy.exc.IntegrityError as e:
         response.status_code = HTTPStatus.BAD_REQUEST.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.BAD_REQUEST.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:Probably a duplicate genre"]
+            errors=[f"{e.__class__.__name__}:Probably a duplicate genre"],
         )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
 
@@ -114,19 +112,19 @@ def delete_genre(genre_id: int, response: Response):
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.OK.value,
                     is_success=True,
-                    data={"message": "Deleted genre successfully"}
+                    data={"message": "Deleted genre successfully"},
                 )
             else:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
                     status_code=HTTPStatus.NOT_FOUND.value,
                     is_success=False,
-                    errors=["Genre not found"]
+                    errors=["Genre not found"],
                 )
     except Exception as e:
         response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR.value
         return ReturnResponse.return_response(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             is_success=False,
-            errors=[f"{e.__class__.__name__}:{str(e)}"]
+            errors=[f"{e.__class__.__name__}:{str(e)}"],
         )

@@ -6,12 +6,11 @@ from sqlalchemy import create_engine
 
 load_dotenv()
 
-host = os.getenv('HOST')
+host = os.getenv("HOST")
 database = os.getenv("DATABASE")
-password = os.getenv('MYSQL_PASSWORD')
-user = os.getenv('MYSQL_USERNAME')
+password = os.getenv("MYSQL_PASSWORD")
+user = os.getenv("MYSQL_USERNAME")
 
 connection_string = f"mysql+mysqlconnector://{user}:{password}@{host}/{database}"
 
 engine = create_engine(connection_string)
-

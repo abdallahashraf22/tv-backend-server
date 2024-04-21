@@ -40,7 +40,7 @@ async def catch_exceptions_middleware(request, call_next):
         )
 
 
-app.middleware('http')(catch_exceptions_middleware)
+app.middleware("http")(catch_exceptions_middleware)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
