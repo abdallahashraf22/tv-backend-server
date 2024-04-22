@@ -71,16 +71,16 @@ def user_watch_content(
         )
 
 
-@actions_router.delete("/watch")
+@actions_router.delete("/watch/{content_id}")
 def remove_user_watched_content(
     current_user: Annotated[FullUser, Depends(is_user)],
-    content: ContentId,
+    content_id: int,
     response: Response,
 ):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
-            content = session.query(Content).filter_by(id=content.content_id).first()
+            content = session.query(Content).filter_by(id=content_id).first()
             if not content:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
@@ -160,16 +160,16 @@ def user_favourite_content(
         )
 
 
-@actions_router.delete("/favourites")
+@actions_router.delete("/favourites/{content_id}")
 def remove_user_favourites_content(
     current_user: Annotated[FullUser, Depends(is_user)],
-    content: ContentId,
+    content_id: int,
     response: Response,
 ):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
-            content = session.query(Content).filter_by(id=content.content_id).first()
+            content = session.query(Content).filter_by(id=content_id).first()
             if not content:
                 response.status_code = HTTPStatus.NOT_FOUND.value
                 return ReturnResponse.return_response(
