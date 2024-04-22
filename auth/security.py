@@ -94,3 +94,7 @@ class UserPydanticModel(BaseModel):
     name: Annotated[str, Field(min_length=3, max_length=64)]
     phone_number: Annotated[str, Field(min_length=11, max_length=13)]
     type: Annotated[str, Field(min_length=3, max_length=64, default="user")]
+
+
+class FullUser(UserPydanticModel):
+    id: int
