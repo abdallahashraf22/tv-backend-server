@@ -3,6 +3,7 @@ from apps.users import users_router
 from apps.content import content_router
 from apps.users_actions import actions_router
 from apps.device_management import device_router
+from apps.synchronization import sync_router
 
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "users_router",
     "actions_router",
     "device_router",
+    "sync_router",
 ]

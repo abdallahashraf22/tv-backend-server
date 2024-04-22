@@ -19,6 +19,31 @@ user_watched_content_association = Table(
     Column("content_id", Integer, ForeignKey("content.id"), primary_key=True),
 )
 
+# user_watching_content = Table(
+#     "user_watching_content",
+#     Base.metadata,
+#     Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+#     Column("content_id", Integer, ForeignKey("content.id"), primary_key=True),
+#     Column("timestamp", String(8)),
+# )
+
+
+############################################################################################################
+
+class UserWatchingContent(Base):
+    __tablename__ = "user_watching_content"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    content_id = Column(Integer, ForeignKey("content.id"), primary_key=True)
+    timestamp = Column(String(8))
+    user = relationship("User", back_populates="watching_content")
+    content = relationship("Content", back_populates="watching_user")
+
+
+############################################################################################################
+
+
+
+
 
 # User Model
 class User(Base):
@@ -41,13 +66,21 @@ class User(Base):
         secondary=user_favorite_content_association,
         back_populates="favourited_user",
     )
+
+    # watching_content = relationship(
+    #     "Content",
+    #     secondary=user_watching_content,
+    #     back_populates="watching_user",
+    # )
+    watching_content = relationship("UserWatchingContent", back_populates="user")
+
     devices = relationship("Device", back_populates="user")
 
 
 content_genre_association = Table(
     "content_genre_table",
     Base.metadata,
-    Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True),
+    Column("genre_id", Integer, ForeignKey("genres.id"), primary_key=True),
     Column("content_id", Integer, ForeignKey("content.id"), primary_key=True),
 )
 
@@ -69,6 +102,13 @@ class Content(Base):
         secondary=user_favorite_content_association,
         back_populates="favourite_content",
     )
+
+    # watching_user = relationship(
+    #     "User",
+    #     secondary=user_watching_content,
+    #     back_populates="watching_content",
+    # )
+    watching_user = relationship("UserWatchingContent", back_populates="content")
 
     genres = relationship(
         "Genre", secondary=content_genre_association, back_populates="content"
