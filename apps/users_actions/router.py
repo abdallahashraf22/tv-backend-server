@@ -16,7 +16,9 @@ class ContentId(BaseModel):
 
 
 @actions_router.get("/watch")
-def get_user_watched(current_user: Annotated[FullUser, Depends(is_user)], response: Response):
+def get_user_watched(
+    current_user: Annotated[FullUser, Depends(is_user)], response: Response
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
@@ -37,7 +39,11 @@ def get_user_watched(current_user: Annotated[FullUser, Depends(is_user)], respon
 
 
 @actions_router.post("/watch")
-def user_watched_content(current_user: Annotated[FullUser, Depends(is_user)], content: ContentId, response: Response):
+def user_watch_content(
+    current_user: Annotated[FullUser, Depends(is_user)],
+    content: ContentId,
+    response: Response,
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
@@ -66,7 +72,11 @@ def user_watched_content(current_user: Annotated[FullUser, Depends(is_user)], co
 
 
 @actions_router.delete("/watch")
-def user_watched_content(current_user: Annotated[FullUser, Depends(is_user)], content: ContentId, response: Response):
+def remove_user_watched_content(
+    current_user: Annotated[FullUser, Depends(is_user)],
+    content: ContentId,
+    response: Response,
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
@@ -95,7 +105,9 @@ def user_watched_content(current_user: Annotated[FullUser, Depends(is_user)], co
 
 
 @actions_router.get("/favourites")
-def get_user_favourites(current_user: Annotated[FullUser, Depends(is_user)], response: Response):
+def get_user_favourites(
+    current_user: Annotated[FullUser, Depends(is_user)], response: Response
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
@@ -116,8 +128,11 @@ def get_user_favourites(current_user: Annotated[FullUser, Depends(is_user)], res
 
 
 @actions_router.post("/favourites")
-def user_favourites_content(current_user: Annotated[FullUser, Depends(is_user)], content: ContentId,
-                            response: Response):
+def user_favourite_content(
+    current_user: Annotated[FullUser, Depends(is_user)],
+    content: ContentId,
+    response: Response,
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)
@@ -146,8 +161,11 @@ def user_favourites_content(current_user: Annotated[FullUser, Depends(is_user)],
 
 
 @actions_router.delete("/favourites")
-def user_favourites_content(current_user: Annotated[FullUser, Depends(is_user)], content: ContentId,
-                            response: Response):
+def remove_user_favourites_content(
+    current_user: Annotated[FullUser, Depends(is_user)],
+    content: ContentId,
+    response: Response,
+):
     try:
         with Session(engine) as session:
             user = session.get(User, current_user.id)

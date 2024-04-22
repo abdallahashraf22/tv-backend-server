@@ -24,9 +24,9 @@ class ContentBase(BaseModel):
 
 @content_router.get("/")
 def get_content(
-        response: Response,
-        current_user: Annotated[FullUser, Depends(is_user)],
-        only_available: bool = False,
+    response: Response,
+    current_user: Annotated[FullUser, Depends(is_user)],
+    only_available: bool = False,
 ):
     try:
         with Session(engine) as session:
@@ -55,9 +55,11 @@ def get_content(
 
 
 @content_router.get("/{content_id}")
-def get_content_by_id(content_id: int,
-                      current_user: Annotated[FullUser, Depends(is_user)],
-                      response: Response):
+def get_content_by_id(
+    content_id: int,
+    current_user: Annotated[FullUser, Depends(is_user)],
+    response: Response,
+):
     try:
         with Session(engine) as session:
             content = (
@@ -87,9 +89,11 @@ def get_content_by_id(content_id: int,
 
 
 @content_router.post("/")
-def create_content(content: ContentBase,
-                   current_user: Annotated[FullUser, Depends(is_admin)],
-                   response: Response):
+def create_content(
+    content: ContentBase,
+    current_user: Annotated[FullUser, Depends(is_admin)],
+    response: Response,
+):
     content = content.dict()
     genres = content.pop("genres")
     try:
@@ -123,9 +127,12 @@ def create_content(content: ContentBase,
 
 
 @content_router.put("/{content_id}")
-def update_content(content_id: int,
-                   current_user: Annotated[FullUser, Depends(is_admin)],
-                   content: ContentBase, response: Response):
+def update_content(
+    content_id: int,
+    current_user: Annotated[FullUser, Depends(is_admin)],
+    content: ContentBase,
+    response: Response,
+):
     content = content.dict()
     genres = content.pop("genres")
     try:
@@ -160,9 +167,11 @@ def update_content(content_id: int,
 
 
 @content_router.delete("/{content_id}")
-def delete_content(content_id: int,
-                   current_user: Annotated[FullUser, Depends(is_admin)],
-                   response: Response):
+def delete_content(
+    content_id: int,
+    current_user: Annotated[FullUser, Depends(is_admin)],
+    response: Response,
+):
     try:
         with Session(engine) as session:
             content_to_delete = session.get(Content, content_id)

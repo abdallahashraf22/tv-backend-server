@@ -8,7 +8,14 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 
 from models import User, engine
 from utils.response import ReturnResponse
-from auth import UserPydanticModel, FullUser, is_user, create_access_token, authenticate_user, get_password_hash
+from auth import (
+    UserPydanticModel,
+    FullUser,
+    is_user,
+    create_access_token,
+    authenticate_user,
+    get_password_hash,
+)
 
 users_router = APIRouter(prefix="/security", tags=["security"])
 
@@ -59,7 +66,11 @@ class UserUpdate(BaseModel):
 
 
 @users_router.put("/update")
-def update_user(response: Response, user: UserUpdate, current_user: Annotated[FullUser, Depends(is_user)]):
+def update_user(
+    response: Response,
+    user: UserUpdate,
+    current_user: Annotated[FullUser, Depends(is_user)],
+):
     if current_user.id != user.id or current_user.type != "admin":
         response.status_code = status.HTTP_403_FORBIDDEN.value
         return ReturnResponse.return_response(
@@ -77,7 +88,10 @@ def update_user(response: Response, user: UserUpdate, current_user: Annotated[Fu
                     is_success=False,
                     errors=["User not found"],
                 )
-            if not get_password_hash(user.old_password) == user_to_update.password or current_user.type != "admin":
+            if (
+                not get_password_hash(user.old_password) == user_to_update.password
+                or current_user.type != "admin"
+            ):
                 response.status_code = status.HTTP_401_UNAUTHORIZED
                 return ReturnResponse.return_response(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -112,7 +126,7 @@ class Token(BaseModel):
 
 @users_router.post("/token", response_model=Token)
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
