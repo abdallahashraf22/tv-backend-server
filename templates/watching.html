@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Watching</title>
+    <script type="text/javascript">
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const content = urlParams.get('content_id')
+        console.log(content);
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJicmlnaHRzdGFyMjEwMSIsImV4cCI6MTcxMzc5Nzc1Mn0.7HqP-eLUYMx6m1nPWBRS0JChb8Uaqw-DrEe4p9e-1lI"
+
+
+
+        function WebSocketTest() {
+            if ("WebSocket" in window) {
+                alert("WebSocket is supported by your Browser!");
+                // Let us open a web socket
+                let ws = new WebSocket(`ws://localhost:8000/sync/ws?token=${token}`);
+                ws.onopen = function () {
+                    alert("Connection is opened...");
+                    ws.send(JSON.stringify({
+                        content_id: content,
+                    }));
+                };
+                ws.onmessage = function (evt) {
+                    let received_msg = evt.data;
+                    console.log("Message is received..." + received_msg)
+                    if(received_msg === "Invalid token"){
+                        alert("Invalid token");
+                        ws.close();
+                        return;
+                    }
+
+                    if (received_msg === "Content not found") {
+                        alert("Invalid content_id");
+                        ws.close();
+                        return;
+                    }
+                    document.getElementById("sse").innerHTML = "<br>" + received_msg;
+                    setInterval(() => {
+                            // Split the string into hours, minutes, and seconds
+                            let [hours, minutes, seconds] = received_msg.split(':').map(Number);
+                            // Add 30 seconds
+                            seconds += 30;
+                            // Handle overflow of seconds into minutes
+                            if (seconds >= 60) {
+                                seconds -= 60;
+                                minutes += 1;
+                            }
+                            // Handle overflow of minutes into hours
+                            if (minutes >= 60) {
+                                minutes -= 60;
+                                hours += 1;
+                            }
+                            // If you want to keep hours in a 24-hour format, use modulo
+                            hours = hours % 24;
+
+                            // Format back to HH:MM:SS with leading zeros
+                            const formattedTime = [
+                                hours.toString().padStart(2, '0'),
+                                minutes.toString().padStart(2, '0'),
+                                seconds.toString().padStart(2, '0')
+                            ].join(':');
+                            ws.send(JSON.stringify({
+                                content_id: content,
+                                timestamp: formattedTime,
+                            }));
+                        }, 30000
+                    );
+                };
+                ws.onclose = function () {
+                    // websocket is closed.
+                    alert("Connection is closed...");
+                };
+            } else {
+                // The browser doesn't support WebSocket
+                alert("WebSocket NOT supported by your Browser!");
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="sse">
+    <a href="javascript:WebSocketTest()">Run WebSocket</a>
+</div>
+</body>
+</html>

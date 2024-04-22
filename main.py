@@ -14,6 +14,7 @@ from apps import (
     users_router,
     actions_router,
     device_router,
+    sync_router,
 )
 
 logging.config.dictConfig(LOGGING_CONFIG)
@@ -25,6 +26,7 @@ app.include_router(content_router)
 app.include_router(users_router)
 app.include_router(actions_router)
 app.include_router(device_router)
+app.include_router(sync_router)
 
 
 @app.get("/")
@@ -51,4 +53,4 @@ async def catch_exceptions_middleware(request, call_next):
 app.middleware("http")(catch_exceptions_middleware)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", port=8000)
