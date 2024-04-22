@@ -76,7 +76,7 @@ class Content(Base):
 
 
 class Genre(Base):
-    __tablename__ = "genre"
+    __tablename__ = "genres"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True)
 
@@ -86,7 +86,7 @@ class Genre(Base):
 
 
 class Device(Base):
-    __tablename__ = "device"
+    __tablename__ = "devices"
     id = Column(Integer, primary_key=True, autoincrement=True)
     mac_address = Column(String(17), unique=True, index=True)
     language = Column(String(2), default="en")
