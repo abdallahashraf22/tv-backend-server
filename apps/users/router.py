@@ -11,10 +11,10 @@ from models import User, engine
 from auth import UserPydanticModel
 from utils.response import ReturnResponse
 
-security_router = APIRouter(prefix="/security", tags=["security"])
+users_router = APIRouter(prefix="/security", tags=["security"])
 
 
-@security_router.post("/register")
+@users_router.post("/register")
 def register_user(response: Response, user: UserPydanticModel):
     try:
         with Session(engine) as session:
@@ -54,7 +54,7 @@ class Token(BaseModel):
     token_type: str
 
 
-@security_router.post("/token", response_model=Token)
+@users_router.post("/token", response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):

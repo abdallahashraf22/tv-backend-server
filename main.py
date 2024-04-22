@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from utils.response import ReturnResponse
 from utils.log_utils import LOGGING_CONFIG
-from apps import genres_router, content_router, security_router
+from apps import genres_router, content_router, users_router
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("TV_backend")
@@ -16,7 +16,7 @@ app = FastAPI()
 
 app.include_router(genres_router)
 app.include_router(content_router)
-app.include_router(security_router)
+app.include_router(users_router)
 
 
 @app.get("/")

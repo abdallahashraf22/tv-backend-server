@@ -1,3 +1,3 @@
-from apps.users.router import security_router
+from apps.users.router import users_router
 
-__all__ = ["security_router"]
+__all__ = ["users_router"]
