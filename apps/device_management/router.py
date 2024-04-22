@@ -21,8 +21,7 @@ class DeviceData(BaseModel):
 
 @device_router.get("/")
 def get_devices(
-        response: Response,
-        current_user: Annotated[FullUser, Depends(is_user)]
+    response: Response, current_user: Annotated[FullUser, Depends(is_user)]
 ):
     try:
         with Session(engine) as session:
@@ -43,9 +42,9 @@ def get_devices(
 
 @device_router.post("/")
 def attach_device_to_user(
-        response: Response,
-        device_data: DeviceData,
-        current_user: Annotated[FullUser, Depends(is_user)]
+    response: Response,
+    device_data: DeviceData,
+    current_user: Annotated[FullUser, Depends(is_user)],
 ):
     try:
         with Session(engine) as session:
@@ -55,11 +54,13 @@ def attach_device_to_user(
             session.commit()
             response.status_code = HTTPStatus.CREATED.value
             return ReturnResponse.return_response(
-                status_code=HTTPStatus.CREATED.value, is_success=True, data={
+                status_code=HTTPStatus.CREATED.value,
+                is_success=True,
+                data={
                     "mac_address": device.mac_address,
                     "language": device.language,
                     "timezone": device.timezone,
-                }
+                },
             )
     except sqlalchemy.exc.IntegrityError as e:
         response.status_code = HTTPStatus.BAD_REQUEST.value
@@ -76,11 +77,12 @@ def attach_device_to_user(
             errors=[f"{e.__class__.__name__}:{str(e)}"],
         )
 
+
 @device_router.delete("/{device_id}")
 def delete_device(
-        response: Response,
-        device_id: int,
-        current_user: Annotated[FullUser, Depends(is_user)]
+    response: Response,
+    device_id: int,
+    current_user: Annotated[FullUser, Depends(is_user)],
 ):
     try:
         with Session(engine) as session:
